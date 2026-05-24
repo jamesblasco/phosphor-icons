@@ -62,7 +62,7 @@ void generateBaseClass(List icons) {
     (libraryBuilder) => libraryBuilder
       ..directives.addAll([
         Directive.import(
-          'package:phosphor_flutter/src/phosphor_icon_data.dart',
+          'package:flutter/widgets.dart',
         ),
         ...styles.map(
           (style) => Directive.import(
@@ -107,7 +107,7 @@ case PhosphorIconsStyle.${style.styleName}:
       ..defaultTo = Code('PhosphorIconsStyle.regular')
       ..type = Reference('PhosphorIconsStyle')))
     ..body = Code(code)
-    ..returns = Reference('PhosphorIconData'));
+    ..returns = Reference('IconData'));
 }
 
 /// reads the phosphor json  of one style and generates a dart class
@@ -136,11 +136,6 @@ void generateStyleClass(List icons, {required StyleFileData style}) {
 
   final phosphorLib = Library(
     (libraryBuilder) => libraryBuilder
-      ..directives.add(
-        Directive.import(
-          'package:phosphor_flutter/src/phosphor_icon_data.dart',
-        ),
-      )
       ..directives.add(
         Directive.import(
           'package:flutter/widgets.dart',
@@ -172,16 +167,15 @@ Field buildFieldIconByStyle(dynamic icon, {required StyleFileData style}) {
 
   if (style == StyleFileData.duotone && properties['codes'] != null) {
     final graphCodes = (properties['codes'] as List).cast<int>();
-    final backgroundHexCode = '0x' + graphCodes.first.toRadixString(16);
     final foregroundHexCode = '0x' + graphCodes.last.toRadixString(16);
     codeStatement = Code(
-      "PhosphorDuotoneIconData($foregroundHexCode, PhosphorIconData($backgroundHexCode, 'Duotone'),)",
+      iconDataCode(foregroundHexCode, style),
     );
   } else {
     final graphCode = properties['code'] as int;
     final hexCode = '0x' + graphCode.toRadixString(16);
     codeStatement = Code(
-      "PhosphorFlatIconData($hexCode, '${style.styleName.capitalize()}')",
+      iconDataCode(hexCode, style),
     );
   }
 
@@ -193,4 +187,14 @@ Field buildFieldIconByStyle(dynamic icon, {required StyleFileData style}) {
       ..name = name
       ..assignment = codeStatement,
   );
+}
+
+String iconDataCode(String hexCode, StyleFileData style) {
+  return '''
+IconData(
+  $hexCode,
+  fontFamily: 'Phosphor${style.styleName.capitalize()}',
+  fontPackage: 'phosphor_flutter',
+  matchTextDirection: true,
+)''';
 }

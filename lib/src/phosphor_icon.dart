@@ -1,7 +1,6 @@
 library phosphor_flutter;
 
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class PhosphorIcon extends Icon {
   const PhosphorIcon(
@@ -37,15 +36,21 @@ class PhosphorIcon extends Icon {
 
   @override
   Widget build(BuildContext context) {
-    if (icon is PhosphorDuotoneIconData) {
-      final duotoneIcon = icon as PhosphorDuotoneIconData;
+    final iconData = icon;
+    if (iconData?.fontFamily == 'PhosphorDuotone') {
+      final secondaryIcon = IconData(
+        iconData!.codePoint - 1,
+        fontFamily: iconData.fontFamily,
+        fontPackage: iconData.fontPackage,
+        matchTextDirection: iconData.matchTextDirection,
+      );
       return Stack(
         alignment: Alignment.center,
         children: [
           Opacity(
             opacity: duotoneSecondaryOpacity,
             child: Icon(
-              duotoneIcon.secondary,
+              secondaryIcon,
               key: key,
               size: size,
               fill: fill,
