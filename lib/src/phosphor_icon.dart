@@ -53,7 +53,6 @@ class PhosphorIcon extends Icon {
           color: iconColor,
           fontFamily: iconData.fontFamily,
           fontFamilyFallback: iconData.fontFamilyFallback,
-          fontPackage: iconData.fontPackage,
           fontSize: iconSize,
           height: 1.0,
           shadows: shadows,
